@@ -3,16 +3,20 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>REDDY SPICES</title>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 margin:0;
-background:#f5f5f5;
+background:#f4f4f4;
 }
 
 header{
@@ -27,25 +31,18 @@ justify-content:space-between;
 align-items:center;
 }
 
-nav ul{
-display:flex;
-list-style:none;
-}
-
-nav ul li{
-margin:0 15px;
-}
-
-nav ul li a{
+nav a{
 color:white;
 text-decoration:none;
+margin:10px;
+font-weight:bold;
 }
 
 .hero{
 background:#a40000;
 color:white;
 text-align:center;
-padding:80px;
+padding:70px;
 }
 
 .products{
@@ -53,20 +50,21 @@ display:flex;
 justify-content:center;
 gap:30px;
 padding:40px;
+flex-wrap:wrap;
 }
 
 .card{
 background:white;
 padding:20px;
-width:220px;
+width:230px;
 border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.2);
+box-shadow:0 3px 10px rgba(0,0,0,0.2);
 text-align:center;
 }
 
-.price{
-font-weight:bold;
-margin:10px;
+.card img{
+width:100%;
+border-radius:10px;
 }
 
 button{
@@ -82,26 +80,26 @@ button:hover{
 background:#b30000;
 }
 
-.cart{
-position:fixed;
-right:0;
-top:0;
-width:300px;
-height:100%;
-background:white;
-border-left:2px solid #ddd;
-padding:20px;
+input[type="number"]{
+width:60px;
+padding:5px;
 }
 
 .cart-item{
+background:white;
+width:320px;
+margin:10px auto;
+padding:15px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.2);
 display:flex;
 justify-content:space-between;
-margin:10px 0;
 }
 
 .total{
+text-align:center;
+font-size:20px;
 margin-top:20px;
-font-weight:bold;
 }
 
 .contact{
@@ -116,6 +114,20 @@ text-align:center;
 padding:10px;
 }
 
+#cartPage{
+display:none;
+padding:30px;
+}
+
+.checkout{
+text-align:center;
+margin-top:20px;
+}
+
+.whatsapp{
+background:#25D366;
+}
+
 </style>
 
 </head>
@@ -126,18 +138,22 @@ padding:10px;
 
 <nav>
 
-<h2>REDDY SPICES</h2>
+<h2>REDDY SPICES 🌶️</h2>
 
-<ul>
-<li><a href="#">Home</a></li>
-<li><a href="#products">Products</a></li>
-<li><a href="#contact">Contact</a></li>
-</ul>
+<div>
+
+<a href="#" onclick="showHome()">Home</a>
+
+<a href="#" onclick="showCart()">🛒 Cart</a>
+
+</div>
 
 </nav>
 
 </header>
 
+
+<div id="homePage">
 
 <section class="hero">
 
@@ -148,69 +164,92 @@ padding:10px;
 </section>
 
 
-
-<section id="products">
-
 <h2 style="text-align:center">Our Products</h2>
 
 <div class="products">
 
-
 <div class="card">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Chili_powder.jpg">
 
 <h3>Red Chilli Powder</h3>
 
-<p>Premium spicy chilli powder</p>
+<p>₹120</p>
 
-<div class="price">₹120</div>
+Quantity
 
-<button onclick="addToCart('Red Chilli Powder',120)">Add to Cart</button>
+<input type="number" id="qty1" value="1" min="1">
+
+<br><br>
+
+<button onclick="addToCart('Red Chilli Powder',120,'qty1')">Add to Cart</button>
 
 </div>
-
 
 
 <div class="card">
 
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Turmeric_powder.jpg">
+
 <h3>Turmeric Powder</h3>
 
-<p>Pure turmeric with rich aroma</p>
+<p>₹90</p>
 
-<div class="price">₹90</div>
+Quantity
 
-<button onclick="addToCart('Turmeric Powder',90)">Add to Cart</button>
+<input type="number" id="qty2" value="1" min="1">
+
+<br><br>
+
+<button onclick="addToCart('Turmeric Powder',90,'qty2')">Add to Cart</button>
+
+</div>
 
 </div>
 
 
-</div>
+<section class="contact">
+
+<h2>Contact</h2>
+
+<p>📞 +91 9949495514</p>
+
+<p>📍 Medchal, Hyderabad, Telangana</p>
 
 </section>
 
+</div>
 
 
-<div class="cart">
 
-<h3>🛒 Cart</h3>
+<div id="cartPage">
 
-<div id="cart-items"></div>
+<h2 style="text-align:center">🛒 Your Cart</h2>
+
+<div id="cartItems"></div>
 
 <p class="total">Total: ₹<span id="total">0</span></p>
 
+
+<div class="checkout">
+
+<button onclick="placeOrder()">Place Order</button>
+
+<br><br>
+
+<button onclick="payUPI()">Pay with UPI</button>
+
+<br><br>
+
+<button class="whatsapp" onclick="orderWhatsApp()">Order on WhatsApp</button>
+
+<br><br>
+
+<button onclick="showHome()">Continue Shopping</button>
+
 </div>
 
-
-
-<section id="contact" class="contact">
-
-<h2>Contact Us</h2>
-
-<p>📞 Mobile: +91 9949495514</p>
-
-<p>📍 Location: Medchal, Hyderabad, Telangana</p>
-
-</section>
-
+</div>
 
 
 <footer>
@@ -220,14 +259,17 @@ padding:10px;
 </footer>
 
 
-
 <script>
 
-let cart = [];
+let cart=[];
 
-function addToCart(name,price){
+function addToCart(name,price,qtyId){
 
-cart.push({name,price});
+let qty=document.getElementById(qtyId).value;
+
+cart.push({name,price,qty});
+
+alert("Product added to cart");
 
 updateCart();
 
@@ -235,21 +277,23 @@ updateCart();
 
 function updateCart(){
 
-let cartItems=document.getElementById("cart-items");
+let cartDiv=document.getElementById("cartItems");
 
 let total=0;
 
-cartItems.innerHTML="";
+cartDiv.innerHTML="";
 
 cart.forEach((item,index)=>{
 
-total+=item.price;
+let itemTotal=item.price*item.qty;
 
-cartItems.innerHTML+=`
+total+=itemTotal;
+
+cartDiv.innerHTML+=`
 
 <div class="cart-item">
 
-${item.name} ₹${item.price}
+${item.name} (${item.qty}) - ₹${itemTotal}
 
 <button onclick="removeItem(${index})">X</button>
 
@@ -271,8 +315,71 @@ updateCart();
 
 }
 
+function showCart(){
+
+document.getElementById("homePage").style.display="none";
+
+document.getElementById("cartPage").style.display="block";
+
+updateCart();
+
+}
+
+function showHome(){
+
+document.getElementById("homePage").style.display="block";
+
+document.getElementById("cartPage").style.display="none";
+
+}
+
+function placeOrder(){
+
+alert("Your order has been placed successfully!");
+
+cart=[];
+
+updateCart();
+
+showHome();
+
+}
+
+function payUPI(){
+
+let total=document.getElementById("total").innerText;
+
+let upiID="8143945514@ybl";
+
+let name="REDDY SPICES";
+
+let url=`upi://pay?pa=${upiID}&pn=${name}&am=${total}&cu=INR`;
+
+window.location.href=url;
+
+}
+
+function orderWhatsApp(){
+
+let total=document.getElementById("total").innerText;
+
+let message="Hello, I want to order:%0A";
+
+cart.forEach(item=>{
+message+=item.name+" x "+item.qty+"%0A";
+});
+
+message+="Total: ₹"+total;
+
+let url="https://wa.me/919949495514?text="+encodeURIComponent(message);
+
+window.open(url);
+
+}
+
 </script>
 
 </body>
+
 </html>
 ```
