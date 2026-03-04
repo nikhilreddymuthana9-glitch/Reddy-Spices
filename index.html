@@ -1,0 +1,278 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REDDY SPICES</title>
+
+<style>
+
+body{
+font-family: Arial;
+margin:0;
+background:#f5f5f5;
+}
+
+header{
+background:#8B0000;
+color:white;
+padding:15px;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+}
+
+nav ul li{
+margin:0 15px;
+}
+
+nav ul li a{
+color:white;
+text-decoration:none;
+}
+
+.hero{
+background:#a40000;
+color:white;
+text-align:center;
+padding:80px;
+}
+
+.products{
+display:flex;
+justify-content:center;
+gap:30px;
+padding:40px;
+}
+
+.card{
+background:white;
+padding:20px;
+width:220px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.price{
+font-weight:bold;
+margin:10px;
+}
+
+button{
+background:#8B0000;
+color:white;
+border:none;
+padding:10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#b30000;
+}
+
+.cart{
+position:fixed;
+right:0;
+top:0;
+width:300px;
+height:100%;
+background:white;
+border-left:2px solid #ddd;
+padding:20px;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+}
+
+.total{
+margin-top:20px;
+font-weight:bold;
+}
+
+.contact{
+text-align:center;
+padding:40px;
+}
+
+footer{
+background:#333;
+color:white;
+text-align:center;
+padding:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<nav>
+
+<h2>REDDY SPICES</h2>
+
+<ul>
+<li><a href="#">Home</a></li>
+<li><a href="#products">Products</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+
+</nav>
+
+</header>
+
+
+<section class="hero">
+
+<h1>Authentic Indian Spices</h1>
+
+<p>Fresh • Pure • Traditional Taste</p>
+
+</section>
+
+
+
+<section id="products">
+
+<h2 style="text-align:center">Our Products</h2>
+
+<div class="products">
+
+
+<div class="card">
+
+<h3>Red Chilli Powder</h3>
+
+<p>Premium spicy chilli powder</p>
+
+<div class="price">₹120</div>
+
+<button onclick="addToCart('Red Chilli Powder',120)">Add to Cart</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Turmeric Powder</h3>
+
+<p>Pure turmeric with rich aroma</p>
+
+<div class="price">₹90</div>
+
+<button onclick="addToCart('Turmeric Powder',90)">Add to Cart</button>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+<div class="cart">
+
+<h3>🛒 Cart</h3>
+
+<div id="cart-items"></div>
+
+<p class="total">Total: ₹<span id="total">0</span></p>
+
+</div>
+
+
+
+<section id="contact" class="contact">
+
+<h2>Contact Us</h2>
+
+<p>📞 Mobile: +91 9949495514</p>
+
+<p>📍 Location: Medchal, Hyderabad, Telangana</p>
+
+</section>
+
+
+
+<footer>
+
+<p>© 2026 REDDY SPICES</p>
+
+</footer>
+
+
+
+<script>
+
+let cart = [];
+
+function addToCart(name,price){
+
+cart.push({name,price});
+
+updateCart();
+
+}
+
+function updateCart(){
+
+let cartItems=document.getElementById("cart-items");
+
+let total=0;
+
+cartItems.innerHTML="";
+
+cart.forEach((item,index)=>{
+
+total+=item.price;
+
+cartItems.innerHTML+=`
+
+<div class="cart-item">
+
+${item.name} ₹${item.price}
+
+<button onclick="removeItem(${index})">X</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("total").innerText=total;
+
+}
+
+function removeItem(index){
+
+cart.splice(index,1);
+
+updateCart();
+
+}
+
+</script>
+
+</body>
+</html>
+```
