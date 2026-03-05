@@ -9,8 +9,6 @@
 
 <title>REDDY SPICES</title>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 <style>
 
 body{
@@ -31,11 +29,14 @@ justify-content:space-between;
 align-items:center;
 }
 
-nav a{
+nav a,nav button{
 color:white;
 text-decoration:none;
 margin:10px;
 font-weight:bold;
+background:none;
+border:none;
+cursor:pointer;
 }
 
 .hero{
@@ -80,9 +81,9 @@ button:hover{
 background:#b30000;
 }
 
-input[type="number"]{
-width:60px;
-padding:5px;
+input{
+padding:6px;
+margin:5px;
 }
 
 .cart-item{
@@ -102,11 +103,6 @@ font-size:20px;
 margin-top:20px;
 }
 
-.contact{
-text-align:center;
-padding:40px;
-}
-
 footer{
 background:#333;
 color:white;
@@ -114,18 +110,15 @@ text-align:center;
 padding:10px;
 }
 
-#cartPage{
+#cartPage,#adminPage{
 display:none;
 padding:30px;
 }
 
-.checkout{
-text-align:center;
-margin-top:20px;
-}
-
-.whatsapp{
-background:#25D366;
+.adminBox{
+background:white;
+padding:20px;
+margin:20px;
 }
 
 </style>
@@ -141,17 +134,14 @@ background:#25D366;
 <h2>REDDY SPICES 🌶️</h2>
 
 <div>
-
-<a href="#" onclick="showHome()">Home</a>
-
-<a href="#" onclick="showCart()">🛒 Cart</a>
-
+<a onclick="showHome()">Home</a>
+<a onclick="showCart()">🛒 Cart</a>
+<button onclick="adminLogin()">Admin</button>
 </div>
 
 </nav>
 
 </header>
-
 
 <div id="homePage">
 
@@ -163,75 +153,22 @@ background:#25D366;
 
 </section>
 
-
 <h2 style="text-align:center">Our Products</h2>
 
-<div class="products">
-
-<div class="card">
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Chili_powder.jpg">
-
-<h3>Red Chilli Powder</h3>
-
-<p>₹120</p>
-
-Quantity
-
-<input type="number" id="qty1" value="1" min="1">
-
-<br><br>
-
-<button onclick="addToCart('Red Chilli Powder',120,'qty1')">Add to Cart</button>
+<div class="products" id="productList"></div>
 
 </div>
-
-
-<div class="card">
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Turmeric_powder.jpg">
-
-<h3>Turmeric Powder</h3>
-
-<p>₹90</p>
-
-Quantity
-
-<input type="number" id="qty2" value="1" min="1">
-
-<br><br>
-
-<button onclick="addToCart('Turmeric Powder',90,'qty2')">Add to Cart</button>
-
-</div>
-
-</div>
-
-
-<section class="contact">
-
-<h2>Contact</h2>
-
-<p>📞 +91 9949495514</p>
-
-<p>📍 Medchal, Hyderabad, Telangana</p>
-
-</section>
-
-</div>
-
 
 
 <div id="cartPage">
 
-<h2 style="text-align:center">🛒 Your Cart</h2>
+<h2 style="text-align:center">🛒 Cart</h2>
 
 <div id="cartItems"></div>
 
-<p class="total">Total: ₹<span id="total">0</span></p>
+<p class="total">Total ₹<span id="total">0</span></p>
 
-
-<div class="checkout">
+<div style="text-align:center">
 
 <button onclick="placeOrder()">Place Order</button>
 
@@ -241,11 +178,34 @@ Quantity
 
 <br><br>
 
-<button class="whatsapp" onclick="orderWhatsApp()">Order on WhatsApp</button>
+<button onclick="orderWhatsApp()">Order on WhatsApp</button>
 
 <br><br>
 
 <button onclick="showHome()">Continue Shopping</button>
+
+</div>
+
+</div>
+
+
+<div id="adminPage">
+
+<div class="adminBox">
+
+<h2>Admin Panel</h2>
+
+<h3>Add Product</h3>
+
+<input id="pname" placeholder="Product Name">
+<input id="pprice" placeholder="Price">
+<input id="pimage" placeholder="Image URL">
+
+<button onclick="addProduct()">Add Product</button>
+
+<h3>Orders</h3>
+
+<div id="orders"></div>
 
 </div>
 
@@ -259,43 +219,37 @@ Quantity
 </footer>
 
 
+
 <script>
 
 let cart=[];
 
-function addToCart(name,price,qtyId){
+let products=[
+{name:"Red Chilli Powder",price:120,image:"https://upload.wikimedia.org/wikipedia/commons/3/36/Chili_powder.jpg"},
+{name:"Turmeric Powder",price:90,image:"https://upload.wikimedia.org/wikipedia/commons/0/0b/Turmeric_powder.jpg"}
+];
 
-let qty=document.getElementById(qtyId).value;
+function renderProducts(){
 
-cart.push({name,price,qty});
+let html="";
 
-alert("Product added to cart");
+products.forEach((p,i)=>{
 
-updateCart();
+html+=`
 
-}
+<div class="card">
 
-function updateCart(){
+<img src="${p.image}">
 
-let cartDiv=document.getElementById("cartItems");
+<h3>${p.name}</h3>
 
-let total=0;
+<p>₹${p.price}</p>
 
-cartDiv.innerHTML="";
+<input type="number" id="qty${i}" value="1" min="1">
 
-cart.forEach((item,index)=>{
+<br><br>
 
-let itemTotal=item.price*item.qty;
-
-total+=itemTotal;
-
-cartDiv.innerHTML+=`
-
-<div class="cart-item">
-
-${item.name} (${item.qty}) - ₹${itemTotal}
-
-<button onclick="removeItem(${index})">X</button>
+<button onclick="addToCart('${p.name}',${p.price},'qty${i}')">Add to Cart</button>
 
 </div>
 
@@ -303,45 +257,72 @@ ${item.name} (${item.qty}) - ₹${itemTotal}
 
 });
 
+document.getElementById("productList").innerHTML=html;
+
+}
+
+renderProducts();
+
+
+function addToCart(name,price,qtyId){
+
+let qty=document.getElementById(qtyId).value;
+
+cart.push({name,price,qty});
+
+updateCart();
+
+}
+
+function updateCart(){
+
+let html="";
+let total=0;
+
+cart.forEach((item,i)=>{
+
+let itemTotal=item.price*item.qty;
+
+total+=itemTotal;
+
+html+=`
+
+<div class="cart-item">
+
+${item.name} (${item.qty}) - ₹${itemTotal}
+
+<button onclick="removeItem(${i})">X</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("cartItems").innerHTML=html;
 document.getElementById("total").innerText=total;
 
 }
 
-function removeItem(index){
+function removeItem(i){
 
-cart.splice(index,1);
-
+cart.splice(i,1);
 updateCart();
 
 }
 
 function showCart(){
 
-document.getElementById("homePage").style.display="none";
-
-document.getElementById("cartPage").style.display="block";
-
-updateCart();
+homePage.style.display="none";
+cartPage.style.display="block";
 
 }
 
 function showHome(){
 
-document.getElementById("homePage").style.display="block";
-
-document.getElementById("cartPage").style.display="none";
-
-}
-
-function placeOrder(){
-
-alert("Your order has been placed successfully!");
-
-cart=[];
-
-updateCart();
-
-showHome();
+cartPage.style.display="none";
+adminPage.style.display="none";
+homePage.style.display="block";
 
 }
 
@@ -349,13 +330,7 @@ function payUPI(){
 
 let total=document.getElementById("total").innerText;
 
-let upiID="8143945514@ybl";
-
-let name="REDDY SPICES";
-
-let url=`upi://pay?pa=${upiID}&pn=${name}&am=${total}&cu=INR`;
-
-window.location.href=url;
+window.location.href=`upi://pay?pa=8143945514@ybl&pn=REDDY SPICES&am=${total}&cu=INR`;
 
 }
 
@@ -363,58 +338,70 @@ function orderWhatsApp(){
 
 let total=document.getElementById("total").innerText;
 
-let message="Hello, I want to order:%0A";
+let msg="Hello I want to order:%0A";
 
-cart.forEach(item=>{
-message+=item.name+" x "+item.qty+"%0A";
+cart.forEach(i=>{
+msg+=i.name+" x "+i.qty+"%0A";
 });
 
-message+="Total: ₹"+total;
+msg+="Total ₹"+total;
 
-let url="https://wa.me/919949495514?text="+encodeURIComponent(message);
-
-window.open(url);
+window.open("https://wa.me/919949495514?text="+msg);
 
 }
 
 </script>
-  ```html id="firebase_reddy_spices"
+
+
 <script type="module">
 
-// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-
-// Your Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAkCMYt9A3k37M8OHqSynpX3W_ICz8MfIA",
-  authDomain: "reddy-spices.firebaseapp.com",
-  projectId: "reddy-spices",
-  storageBucket: "reddy-spices.firebasestorage.app",
-  messagingSenderId: "558607507167",
-  appId: "1:558607507167:web:aa8b119912b5975dac136a"
+const firebaseConfig={
+apiKey:"AIzaSyAkCMYt9A3k37M8OHqSynpX3W_ICz8MfIA",
+authDomain:"reddy-spices.firebaseapp.com",
+projectId:"reddy-spices",
+storageBucket:"reddy-spices.firebasestorage.app",
+messagingSenderId:"558607507167",
+appId:"1:558607507167:web:aa8b119912b5975dac136a"
 };
 
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+window.placeOrder=async function(){
 
+let total=document.getElementById("total").innerText;
 
-// ADMIN LOGIN
-window.adminLogin = async function(){
+await addDoc(collection(db,"orders"),{
+items:cart,
+total:total,
+date:new Date().toISOString()
+});
 
-let email = prompt("Enter admin email");
-let password = prompt("Enter admin password");
+alert("Order saved");
+
+cart=[];
+updateCart();
+showHome();
+
+}
+
+window.adminLogin=async function(){
+
+let email=prompt("Admin email");
+let password=prompt("Admin password");
 
 try{
 
 await signInWithEmailAndPassword(auth,email,password);
 
-alert("Admin login successful");
+alert("Admin login success");
+
+showAdmin();
 
 }catch(e){
 
@@ -424,40 +411,41 @@ alert("Login failed");
 
 }
 
+async function showAdmin(){
 
-// SAVE CUSTOMER ORDER
-window.saveOrder = async function(order){
+homePage.style.display="none";
+cartPage.style.display="none";
+adminPage.style.display="block";
 
-try{
+let query=await getDocs(collection(db,"orders"));
 
-await addDoc(collection(db,"orders"),order);
+let html="";
 
-alert("Order saved successfully");
+query.forEach(doc=>{
 
-}catch(e){
+let d=doc.data();
 
-alert("Order failed");
-
-}
-
-}
-
-
-// LOAD ORDERS (Admin)
-window.loadOrders = async function(){
-
-const querySnapshot = await getDocs(collection(db,"orders"));
-
-querySnapshot.forEach((doc)=>{
-
-console.log(doc.data());
+html+=`<div class="cart-item">Order ₹${d.total}</div>`;
 
 });
+
+document.getElementById("orders").innerHTML=html;
+
+}
+
+window.addProduct=function(){
+
+let name=document.getElementById("pname").value;
+let price=document.getElementById("pprice").value;
+let image=document.getElementById("pimage").value;
+
+products.push({name,price,image});
+
+renderProducts();
 
 }
 
 </script>
-```
 
 </body>
 
