@@ -378,6 +378,86 @@ window.open(url);
 }
 
 </script>
+  ```html id="firebase_reddy_spices"
+<script type="module">
+
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAkCMYt9A3k37M8OHqSynpX3W_ICz8MfIA",
+  authDomain: "reddy-spices.firebaseapp.com",
+  projectId: "reddy-spices",
+  storageBucket: "reddy-spices.firebasestorage.app",
+  messagingSenderId: "558607507167",
+  appId: "1:558607507167:web:aa8b119912b5975dac136a"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+
+// ADMIN LOGIN
+window.adminLogin = async function(){
+
+let email = prompt("Enter admin email");
+let password = prompt("Enter admin password");
+
+try{
+
+await signInWithEmailAndPassword(auth,email,password);
+
+alert("Admin login successful");
+
+}catch(e){
+
+alert("Login failed");
+
+}
+
+}
+
+
+// SAVE CUSTOMER ORDER
+window.saveOrder = async function(order){
+
+try{
+
+await addDoc(collection(db,"orders"),order);
+
+alert("Order saved successfully");
+
+}catch(e){
+
+alert("Order failed");
+
+}
+
+}
+
+
+// LOAD ORDERS (Admin)
+window.loadOrders = async function(){
+
+const querySnapshot = await getDocs(collection(db,"orders"));
+
+querySnapshot.forEach((doc)=>{
+
+console.log(doc.data());
+
+});
+
+}
+
+</script>
+```
 
 </body>
 
